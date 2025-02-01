@@ -1,32 +1,35 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
+import useSWR from "swr";
 import { getDashboardMetrics } from "../services/api";
 import DueAlerts from "./DueAlerts";
 
 Chart.register(...registerables);
 
 const Dashboard = () => {
-  const [metrics, setMetrics] = useState({
-    totalTenants: 0,
-    monthlyProjection: 0,
-    upcomingDueDates: [],
-  });
+  const { data: dashboardData, error } = useSWR(
+    "/dashboard-metrics",
+    getDashboardMetrics
+  );
 
-  useEffect(() => {
-    const loadMetrics = async () => {
-      const { data } = await getDashboardMetrics();
-      setMetrics(data);
-    };
-    loadMetrics();
-  }, []);
+  if (!dashboardData?.data) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading data</div>;
+  }
 
   const chartData = {
     labels: ["Active Tenants", "Monthly Projection"],
     datasets: [
       {
         label: "Key Metrics",
-        data: [metrics.totalTenants, metrics.monthlyProjection],
+        data: [
+          dashboardData?.data?.totalTenants,
+          dashboardData?.data.monthlyProjection,
+        ],
         backgroundColor: ["#3B82F6", "#10B981"],
       },
     ],
@@ -39,7 +42,9 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         <div className="bg-white p-4 rounded-lg shadow">
           <h3 className="text-xl font-semibold mb-2">Total Active Tenants</h3>
-          <p className="text-4xl text-blue-600">{metrics.totalTenants}</p>
+          <p className="text-4xl text-blue-600">
+            {dashboardData?.data.totalTenants}
+          </p>
         </div>
 
         <div className="bg-white p-4 rounded-lg shadow">
@@ -47,7 +52,7 @@ const Dashboard = () => {
             Monthly Rent Projection
           </h3>
           <p className="text-4xl text-green-600">
-            ₱{metrics.monthlyProjection?.toLocaleString()}
+            ₱{dashboardData?.data.monthlyProjection?.toLocaleString()}
           </p>
         </div>
       </div>
@@ -58,7 +63,7 @@ const Dashboard = () => {
           <Bar data={chartData} />
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow">
+        {/* <div className="bg-white p-4 rounded-lg shadow">
           <h3 className="text-xl font-semibold mb-4">Upcoming Due Dates</h3>
           <div className="overflow-x-auto">
             <table className="min-w-full">
@@ -70,7 +75,7 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {metrics.upcomingDueDates?.map((tenant) => (
+                {dashboardData?.data?.upcomingDueDates?.map((tenant) => (
                   <tr key={tenant.tenantid} className="border-t">
                     <td className="px-4 py-2">{tenant.fullname}</td>
                     <td className="px-4 py-2">{tenant.duedate}</td>
@@ -80,7 +85,7 @@ const Dashboard = () => {
               </tbody>
             </table>
           </div>
-        </div>
+        </div> */}
         <DueAlerts />
       </div>
     </div>
