@@ -26,11 +26,14 @@ function App() {
           >
             <Menu size={24} />
           </button>
+          {/* prettier-ignore */}
           <Routes>
             <Route path="/" element={<Dashboard />} />
-            <Route path="/tenants" element={<TenantList />} />
-            <Route path="/add" element={<TenantForm />} />
-            <Route path="/edit/:id" element={<TenantForm />} />
+            <Route path="/tenants">
+              <Route index element={<TenantList />} />
+              <Route path="add" element={<TenantForm />} />
+              <Route path="edit/:id" element={<TenantForm />} />
+            </Route>
             <Route path="/payments" element={<PaymentTable />} />
             <Route
               path="/tenants/:tenantId/payments"

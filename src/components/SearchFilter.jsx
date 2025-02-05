@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 const SearchFilters = ({
   searchTerm,
@@ -10,52 +10,60 @@ const SearchFilters = ({
   sortOrder,
   setSortOrder,
 }) => {
+  const [localSearch, setLocalSearch] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSearchTerm(localSearch);
+  };
+
   return (
-    <div className="bg-white p-4 rounded-lg shadow mb-4">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div>
-          <input
-            type="text"
-            placeholder="Search tenants..."
-            className="w-full p-2 border rounded"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
+    <div className="mb-4 space-y-4">
+      <form onSubmit={handleSubmit} className="flex gap-2">
+        <input
+          type="text"
+          placeholder="Search by name..."
+          value={localSearch}
+          onChange={(e) => setLocalSearch(e.target.value)}
+          className="border p-2 rounded-lg flex-grow"
+        />
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+        >
+          Search
+        </button>
+      </form>
 
-        <div>
-          <select
-            className="w-full p-2 border rounded"
-            value={isActiveFilter}
-            onChange={(e) => setIsActiveFilter(e.target.value)}
-          >
-            <option value="">All Statuses</option>
-            <option value="true">Active</option>
-            <option value="false">Inactive</option>
-          </select>
-        </div>
+      <select
+        value={isActiveFilter}
+        onChange={(e) => setIsActiveFilter(e.target.value)}
+        className="border p-2 rounded-lg"
+      >
+        <option value="">All Statuses</option>
+        <option value="true">Active</option>
+        <option value="false">Inactive</option>
+      </select>
 
-        <div className="col-span-2 flex gap-2">
-          <select
-            className="w-1/2 p-2 border rounded"
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-          >
-            <option value="">Sort By</option>
-            <option value="full_name">Name</option>
-            <option value="monthly_rent">Rent Amount</option>
-            <option value="due_date">Due Date</option>
-          </select>
-
-          <select
-            className="w-1/2 p-2 border rounded"
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
-          >
-            <option value="asc">Ascending</option>
-            <option value="desc">Descending</option>
-          </select>
-        </div>
+      <div className="flex gap-2">
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="border p-2 rounded-lg"
+        >
+          <option value="">Sort By</option>
+          <option value="full_name">Name</option>
+          <option value="created_at">Join Date</option>
+          <option value="is_active">Status</option>
+        </select>
+        <select
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value)}
+          className="border p-2 rounded-lg"
+        >
+          <option value="asc">Ascending</option>
+          <option value="desc">Descending</option>
+        </select>
       </div>
     </div>
   );
