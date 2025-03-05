@@ -7,8 +7,6 @@ const api = axios.create({
   },
 });
 
-// Tenants
-// Tenants
 export const getTenants = async (params = {}) => {
   try {
     const response = await api.get("/tenants", {
