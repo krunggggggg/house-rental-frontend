@@ -2,11 +2,17 @@ import React, { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import useSWR from "swr";
 import { getAllTenants, deleteTenant } from "../services/api";
-import PaymentHistory from "./PaymentHistory";
-import SearchFilters from "./SearchFilter";
+import PaymentHistory from "../components/PaymentHistory";
+import SearchFilters from "../components/SearchFilter";
 import { useDebounce } from "../hooks/useDebounce"; // Ensure this is implemented
 import isUndefined from "lodash/isUndefined";
-import { PlusIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import {
+  PlusIcon,
+  PencilSquareIcon,
+  TrashIcon,
+  EyeIcon,
+  DocumentTextIcon,
+} from "@heroicons/react/24/outline";
 
 const TenantList = () => {
   const navigate = useNavigate();
@@ -32,8 +38,6 @@ const TenantList = () => {
       shouldRetryOnError: false,
     }
   );
-
-  console.log("SWR data:", data, "Error:", error);
 
   const handleDelete = async (id) => {
     try {
@@ -105,7 +109,10 @@ const TenantList = () => {
           <tbody>
             {data.tenants?.map((tenant) => (
               <React.Fragment key={tenant.tenant_id}>
-                <tr onClick={() => handleTenantRowClick(tenant.tenant_id)}>
+                <tr
+                  onClick={() => handleTenantRowClick(tenant.tenant_id)}
+                  className="hover:bg-gray-50 cursor-pointer"
+                >
                   <td className="py-2 px-4 border">{tenant.full_name}</td>
                   <td className="py-2 px-4 border">₱{tenant.monthly_rent}</td>
                   <td className="py-2 px-4 border">{tenant.due_date}</td>
@@ -114,19 +121,19 @@ const TenantList = () => {
                   </td>
                   <td className="py-2 px-4 border">
                     <div className="flex gap-2">
+                      {/* View All Payments Icon */}
                       <button
                         onClick={stopPropagationAndCall(() =>
                           navigate("/payments")
                         )}
-                        className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600"
+                        className="hover:text-indigo-600"
                       >
-                        View All Payments
+                        <EyeIcon className="size-6 text-indigo-500" />
                       </button>
-                    </div>
-                    <div className="flex space-x-2">
+
                       {/* Edit Button */}
                       <button
-                        className="flex items-center gap-2"
+                        className="hover:text-blue-600"
                         onClick={stopPropagationAndCall(() =>
                           handleEditClick(tenant.tenant_id)
                         )}
@@ -134,19 +141,19 @@ const TenantList = () => {
                         <PencilSquareIcon className="size-6 text-blue-500" />
                       </button>
 
-                      {/* Toggle Payment History Button */}
+                      {/* Show Payments Icon */}
                       <button
                         onClick={stopPropagationAndCall(() =>
                           handlePaymentHistoryClick(tenant.tenant_id)
                         )}
-                        className="bg-purple-500 text-white px-3 py-1 rounded hover:bg-purple-600"
+                        className="hover:text-purple-600"
                       >
-                        {expandedTenant === tenant.tenant_id ? "Hide" : "Show"}{" "}
-                        Payments
+                        <DocumentTextIcon className="size-6 text-purple-500" />
                       </button>
 
+                      {/* Add Payment Icon */}
                       <button
-                        className="flex items-center gap-2"
+                        className="hover:text-blue-600"
                         onClick={stopPropagationAndCall(() =>
                           navigate(`/tenants/${tenant.tenant_id}/payments`)
                         )}
@@ -154,13 +161,14 @@ const TenantList = () => {
                         <PlusIcon className="size-6 text-blue-500" />
                       </button>
 
+                      {/* Delete Button */}
                       <button
                         onClick={stopPropagationAndCall(() =>
                           handleDelete(tenant.tenant_id)
                         )}
-                        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                        className="hover:text-red-600"
                       >
-                        Delete
+                        <TrashIcon className="size-6 text-red-500" />
                       </button>
                     </div>
                   </td>

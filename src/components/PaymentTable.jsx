@@ -10,10 +10,13 @@ const PaymentTable = () => {
   const [endDate, setEndDate] = useState(null);
   const [statusFilter, setStatusFilter] = useState("all");
 
+  // Fetch payments with filters
   const { data, error } = useSWR(
     `?start=${startDate?.toISOString()}&end=${endDate?.toISOString()}&status=${statusFilter}`,
     getPayments
   );
+
+  // Handle receipt download
   const handleDownloadReceipt = async (paymentId) => {
     try {
       const response = await fetch(
@@ -66,7 +69,7 @@ const PaymentTable = () => {
         <table className="min-w-full bg-white border">
           <thead>
             <tr className="bg-gray-100">
-              <th className="py-2 px-4 border">Date</th>
+              <th className="py-2 px-4 border">Date Range</th>
               <th className="py-2 px-4 border">Tenant</th>
               <th className="py-2 px-4 border">Amount</th>
               <th className="py-2 px-4 border">Status</th>
@@ -77,11 +80,13 @@ const PaymentTable = () => {
             {data.payments?.map((payment) => (
               <tr key={payment.payment_id}>
                 <td className="py-2 px-4 border">
-                  {new Date(payment.payment_date).toLocaleDateString()}
+                  {`${new Date(
+                    payment.payment_start_date
+                  ).toLocaleDateString()} - ${new Date(
+                    payment.payment_end_date
+                  ).toLocaleDateString()}`}
                 </td>
-                <td className="py-2 px-4 border">
-                  {payment.tenant?.full_name}
-                </td>
+                <td className="py-2 px-4 border">{payment.full_name}</td>
                 <td className="py-2 px-4 border">₱{payment.amount_paid}</td>
                 <td className="py-2 px-4 border">
                   <span

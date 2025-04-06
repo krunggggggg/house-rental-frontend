@@ -66,7 +66,6 @@ export const getAllTenants = async (params) => {
     );
 
     const response = await api.get("/tenants", { params: filteredParams });
-    console.log("API response:", response.data);
 
     return response.data;
   } catch (error) {
@@ -81,7 +80,22 @@ export const updateTenant = (id, data) => api.put(`/tenants/${id}`, data);
 
 export const getDashboardMetrics = () => api.get("/dashboard/metrics");
 
-export const getPayments = (tenantId) => api.get(`/payments/${tenantId}`);
+export const getPayments = async (tenantId) => {
+  try {
+    const response = await api.get(`/payments/${tenantId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching tenants:", error);
+    throw error;
+  }
+};
 
-export const createPayment = (tenantId, paymentData) =>
-  api.post(`/payments/${tenantId}`, paymentData);
+export const createPayment = async (tenantId, paymentData) => {
+  try {
+    const response = await api.post(`/payments/${tenantId}`, paymentData);
+    return response.data;
+  } catch (error) {
+    console.error("API Error:", error);
+    throw new Error("Failed to create payment. Please try again.");
+  }
+};

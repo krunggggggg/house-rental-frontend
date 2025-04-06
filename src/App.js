@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import TenantList from "./components/TenantList";
+import TenantList from "./modules/TenantList";
 import TenantForm from "./components/TenantForm";
 import Dashboard from "./components/Dashboard";
 import PaymentTable from "./components/PaymentTable";
